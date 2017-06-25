@@ -87,13 +87,13 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 	if err != nil {
 		return nil, err
 	}
-    body, err := ioutil.ReadAll(resp.Body)
-    if err != nil {
-        return nil, err
-    }
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	// Validate the response format first
 	var r *Response
-    err = json.Unmarshal(body, &r)
+	err = json.Unmarshal(body, &r)
 	if err != nil {
 		// The response isn't json
 		return nil, err

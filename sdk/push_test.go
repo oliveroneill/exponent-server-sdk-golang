@@ -12,7 +12,7 @@ func TestValidateResponseErrorStatus(t *testing.T) {
 	}
 	err := response.ValidateResponse()
 	typed, ok := err.(*PushResponseError)
-    if !ok {
+	if !ok {
 		t.Error("Incorrect error type")
 	}
 	if typed.Response != response {
@@ -38,7 +38,7 @@ func TestValidateResponseDeviceNotRegistered(t *testing.T) {
 	}
 	err := response.ValidateResponse()
 	typed, ok := err.(*DeviceNotRegisteredError)
-    if !ok {
+	if !ok {
 		t.Error("Incorrect error type")
 	}
 	if typed.Response != response {
@@ -54,7 +54,7 @@ func TestValidateResponseErrorMessageTooBig(t *testing.T) {
 	}
 	err := response.ValidateResponse()
 	typed, ok := err.(*MessageTooBigError)
-    if !ok {
+	if !ok {
 		t.Error("Incorrect error type")
 	}
 	if typed.Response != response {
@@ -70,7 +70,7 @@ func TestValidateResponseErrorMessageRateExceeded(t *testing.T) {
 	}
 	err := response.ValidateResponse()
 	typed, ok := err.(*MessageRateExceededError)
-    if !ok {
+	if !ok {
 		t.Error("Incorrect error type")
 	}
 	if typed.Response != response {
