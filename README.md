@@ -5,7 +5,7 @@ Exponent push notification go library based on [Expo's python sdk](https://githu
 ## Installation
 
 ```
-go get github.com/oliveroneill/exponent-server-sdk-golang
+go get github.com/oliveroneill/exponent-server-sdk-golang/sdk
 ```
 
 ## Usage
