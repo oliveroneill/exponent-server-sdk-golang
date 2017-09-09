@@ -2,8 +2,8 @@ package expo
 
 import (
 	"errors"
-	"strings"
 	"net/http"
+	"strings"
 )
 
 // ExponentPushToken is a valid Expo push token
@@ -25,7 +25,6 @@ const (
 	// HighPriority is a priority used in PushMessage
 	HighPriority = "high"
 )
-
 
 // PushMessage is an object that describes a push notification request.
 // Fields:
@@ -67,10 +66,13 @@ type Response struct {
 
 // SuccessStatus is the status returned from Expo on a success
 const SuccessStatus = "ok"
+
 // ErrorDeviceNotRegistered indicates the token is invalid
 const ErrorDeviceNotRegistered = "DeviceNotRegistered"
+
 // ErrorMessageTooBig indicates the message went over payload size of 4096 bytes
 const ErrorMessageTooBig = "MessageTooBig"
+
 // ErrorMessageRateExceeded indicates messages have been sent too frequently
 const ErrorMessageRateExceeded = "MessageRateExceeded"
 
@@ -82,19 +84,19 @@ const ErrorMessageRateExceeded = "MessageRateExceeded"
 //      'message': '"adsf" is not a registered push notification recipient'}
 type PushResponse struct {
 	PushMessage PushMessage
-	Status      string `json:"status"`
-	Message     string `json:"message"`
+	Status      string            `json:"status"`
+	Message     string            `json:"message"`
 	Details     map[string]string `json:"details"`
 }
 
-func (r *PushResponse) isSuccess() (bool) {
+func (r *PushResponse) isSuccess() bool {
 	return r.Status == SuccessStatus
 }
 
 // ValidateResponse returns an error if the response indicates that one occurred.
 // Clients should handle these errors, since these require custom handling
 // to properly resolve.
-func (r *PushResponse) ValidateResponse() (error) {
+func (r *PushResponse) ValidateResponse() error {
 	if r.isSuccess() {
 		return nil
 	}
@@ -161,25 +163,24 @@ type MessageRateExceededError struct {
 //   }
 // ]}
 type PushServerError struct {
-	Message       string
-	Response      *http.Response
-	ResponseData  *Response
-	Errors        []map[string]string
+	Message      string
+	Response     *http.Response
+	ResponseData *Response
+	Errors       []map[string]string
 }
 
 // NewPushServerError creates a new PushServerError object
 func NewPushServerError(message string, response *http.Response,
-						responseData *Response,
-						errors []map[string]string) *PushServerError {
+	responseData *Response,
+	errors []map[string]string) *PushServerError {
 	return &PushServerError{
-		Message:       message,
-		Response:      response,
-		ResponseData:  responseData,
-		Errors:        errors,
+		Message:      message,
+		Response:     response,
+		ResponseData: responseData,
+		Errors:       errors,
 	}
 }
 
 func (e *PushServerError) Error() string {
 	return e.Message
 }
-

@@ -1,12 +1,12 @@
 package expo
 
 import (
-	"fmt"
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
-	"encoding/json"
 )
 
 const (
@@ -32,7 +32,7 @@ type ClientConfig struct {
 // NewPushClient creates a new Exponent push client
 // See full API docs at https://docs.getexponent.com/versions/v13.0.0/guides/push-notifications.html#http-2-api
 func NewPushClient(config *ClientConfig) *PushClient {
-	c := new(PushClient);
+	c := new(PushClient)
 	host := DefaultHost
 	apiURL := DefaultBaseAPIURL
 	if config != nil && config.host != "" {
@@ -74,7 +74,7 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 		}
 	}
 	url := fmt.Sprintf("%s%s/push/send", c.host, c.apiURL)
-    jsonBytes, err := json.Marshal(messages)
+	jsonBytes, err := json.Marshal(messages)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 	return r.Data, nil
 }
 
-func checkStatus(resp *http.Response) (error) {
+func checkStatus(resp *http.Response) error {
 	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
 		return nil
 	}

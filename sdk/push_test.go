@@ -6,8 +6,8 @@ import (
 
 func TestValidateResponseErrorStatus(t *testing.T) {
 	response := &PushResponse{
-		Status: "error",
-		Message:"failed",
+		Status:  "error",
+		Message: "failed",
 		Details: map[string]string{},
 	}
 	err := response.ValidateResponse()
@@ -32,9 +32,9 @@ func TestValidateResponseSuccess(t *testing.T) {
 
 func TestValidateResponseDeviceNotRegistered(t *testing.T) {
 	response := &PushResponse{
-		Status: "error",
-		Message:"Not registered",
-		Details: map[string]string{"error":"DeviceNotRegistered"},
+		Status:  "error",
+		Message: "Not registered",
+		Details: map[string]string{"error": "DeviceNotRegistered"},
 	}
 	err := response.ValidateResponse()
 	typed, ok := err.(*DeviceNotRegisteredError)
@@ -48,9 +48,9 @@ func TestValidateResponseDeviceNotRegistered(t *testing.T) {
 
 func TestValidateResponseErrorMessageTooBig(t *testing.T) {
 	response := &PushResponse{
-		Status: "error",
-		Message:"Message too big",
-		Details: map[string]string{"error":"MessageTooBig"},
+		Status:  "error",
+		Message: "Message too big",
+		Details: map[string]string{"error": "MessageTooBig"},
 	}
 	err := response.ValidateResponse()
 	typed, ok := err.(*MessageTooBigError)
@@ -64,9 +64,9 @@ func TestValidateResponseErrorMessageTooBig(t *testing.T) {
 
 func TestValidateResponseErrorMessageRateExceeded(t *testing.T) {
 	response := &PushResponse{
-		Status: "error",
-		Message:"Too many messages at once",
-		Details: map[string]string{"error":"MessageRateExceeded"},
+		Status:  "error",
+		Message: "Too many messages at once",
+		Details: map[string]string{"error": "MessageRateExceeded"},
 	}
 	err := response.ValidateResponse()
 	typed, ok := err.(*MessageRateExceededError)
