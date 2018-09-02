@@ -15,17 +15,22 @@ const (
 	DefaultBaseAPIURL = "/--/api/v2"
 )
 
+// DefaultHTTPClient is the default *http.Client for making API requests
+var DefaultHTTPClient = &http.Client{}
+
 // PushClient is an object used for making push notification requests
 type PushClient struct {
-	host   string
-	apiURL string
+	host       string
+	apiURL     string
+	httpClient *http.Client
 }
 
 // ClientConfig specifies params that can optionally be specified for alternate
 // Expo config and path setup when sending API requests
 type ClientConfig struct {
-	host   string
-	apiURL string
+	Host       string
+	ApiURL     string
+	HttpClient *http.Client
 }
 
 // NewPushClient creates a new Exponent push client
@@ -34,14 +39,19 @@ func NewPushClient(config *ClientConfig) *PushClient {
 	c := new(PushClient)
 	host := DefaultHost
 	apiURL := DefaultBaseAPIURL
-	if config != nil && config.host != "" {
-		host = config.host
+	httpClient := DefaultHTTPClient
+	if config != nil && config.Host != "" {
+		host = config.Host
 	}
-	if config != nil && config.apiURL != "" {
-		apiURL = config.apiURL
+	if config != nil && config.ApiURL != "" {
+		apiURL = config.ApiURL
+	}
+	if config != nil && config.HttpClient != nil {
+		httpClient = config.HttpClient
 	}
 	c.host = host
 	c.apiURL = apiURL
+	c.httpClient = httpClient
 	return c
 }
 
@@ -77,7 +87,7 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 	if err != nil {
 		return nil, err
 	}
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonBytes))
+	resp, err := c.httpClient.Post(url, "application/json", bytes.NewBuffer(jsonBytes))
 	if err != nil {
 		return nil, err
 	}
