@@ -1,4 +1,5 @@
 # exponent-server-sdk-golang
+[![Build Status](https://travis-ci.org/oliveroneill/exponent-server-sdk-golang.svg?branch=master)](https://travis-ci.org/oliveroneill/exponent-server-sdk-golang)
 
 Exponent push notification go library based on [Expo's python sdk](https://github.com/exponent/exponent-server-sdk-python)
 
