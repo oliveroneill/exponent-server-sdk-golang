@@ -29,8 +29,8 @@ type PushClient struct {
 // Expo config and path setup when sending API requests
 type ClientConfig struct {
 	Host       string
-	ApiURL     string
-	HttpClient *http.Client
+	APIURL     string
+	HTTPClient *http.Client
 }
 
 // NewPushClient creates a new Exponent push client
@@ -43,11 +43,11 @@ func NewPushClient(config *ClientConfig) *PushClient {
 	if config != nil && config.Host != "" {
 		host = config.Host
 	}
-	if config != nil && config.ApiURL != "" {
-		apiURL = config.ApiURL
+	if config != nil && config.APIURL != "" {
+		apiURL = config.APIURL
 	}
-	if config != nil && config.HttpClient != nil {
-		httpClient = config.HttpClient
+	if config != nil && config.HTTPClient != nil {
+		httpClient = config.HTTPClient
 	}
 	c.host = host
 	c.apiURL = apiURL
