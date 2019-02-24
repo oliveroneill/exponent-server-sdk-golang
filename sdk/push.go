@@ -49,6 +49,8 @@ const (
 //          specified above.
 //	Badge: An integer representing the unread notification count. This
 //	       currently only affects iOS. Specify 0 to clear the badge count.
+//	ChannelID: ID of the Notification Channel through which to display this
+//         notification on Android devices.
 type PushMessage struct {
 	To         ExponentPushToken `json:"to"`
 	Body       string            `json:"body,omitempty"`
@@ -59,6 +61,7 @@ type PushMessage struct {
 	Expiration int64             `json:"expiration,omitempty"`
 	Priority   string            `json:"priority,omitempty"`
 	Badge      int               `json:"badge,omitempty"`
+	ChannelID  string            `json:"channelId,omitempty"`
 }
 
 // Response is the HTTP response returned from an Expo publish HTTP request
