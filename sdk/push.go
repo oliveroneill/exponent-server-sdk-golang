@@ -53,7 +53,7 @@ const (
 //         notification on Android devices.
 type PushMessage struct {
 	To         ExponentPushToken `json:"to"`
-	Body       string            `json:"body,omitempty"`
+	Body       string            `json:"body"`
 	Data       map[string]string `json:"data,omitempty"`
 	Sound      string            `json:"sound,omitempty"`
 	Title      string            `json:"title,omitempty"`
