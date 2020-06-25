@@ -78,8 +78,13 @@ func (c *PushClient) PublishMultiple(messages []PushMessage) ([]PushResponse, er
 func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, error) {
 	// Validate the messages
 	for _, message := range messages {
-		if message.To == "" {
-			return nil, errors.New("Invalid push token")
+		if len(message.To) == 0 {
+			return nil, errors.New("No recipients")
+		}
+		for _, recipient := range message.To {
+			if recipient == "" {
+				return nil, errors.New("Invalid push token")
+			}
 		}
 	}
 	url := fmt.Sprintf("%s%s/push/send", c.host, c.apiURL)
