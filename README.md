@@ -21,7 +21,7 @@ package main
 
 import (
     "fmt"
-    "github.com/oliveroneill/exponent-server-sdk-golang/sdk"
+    expo "github.com/oliveroneill/exponent-server-sdk-golang/sdk"
 )
 
 func main() {
@@ -37,7 +37,7 @@ func main() {
     // Publish message
     response, err := client.Publish(
         &expo.PushMessage{
-            To: pushToken,
+            To: []expo.ExponentPushToken{pushToken},
             Body: "This is a test notification",
             Data: map[string]string{"withSome": "data"},
             Sound: "default",
