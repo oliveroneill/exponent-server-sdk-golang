@@ -20,17 +20,19 @@ var DefaultHTTPClient = &http.Client{}
 
 // PushClient is an object used for making push notification requests
 type PushClient struct {
-	host       string
-	apiURL     string
-	httpClient *http.Client
+	host        string
+	apiURL      string
+	accessToken string
+	httpClient  *http.Client
 }
 
 // ClientConfig specifies params that can optionally be specified for alternate
 // Expo config and path setup when sending API requests
 type ClientConfig struct {
-	Host       string
-	APIURL     string
-	HTTPClient *http.Client
+	Host        string
+	APIURL      string
+	AccessToken string
+	HTTPClient  *http.Client
 }
 
 // NewPushClient creates a new Exponent push client
@@ -40,18 +42,25 @@ func NewPushClient(config *ClientConfig) *PushClient {
 	host := DefaultHost
 	apiURL := DefaultBaseAPIURL
 	httpClient := DefaultHTTPClient
-	if config != nil && config.Host != "" {
-		host = config.Host
-	}
-	if config != nil && config.APIURL != "" {
-		apiURL = config.APIURL
-	}
-	if config != nil && config.HTTPClient != nil {
-		httpClient = config.HTTPClient
+	accessToken := ""
+	if config != nil {
+		if config.Host != "" {
+			host = config.Host
+		}
+		if config.APIURL != "" {
+			apiURL = config.APIURL
+		}
+		if config.AccessToken != "" {
+			accessToken = config.AccessToken
+		}
+		if config.HTTPClient != nil {
+			httpClient = config.HTTPClient
+		}
 	}
 	c.host = host
 	c.apiURL = apiURL
 	c.httpClient = httpClient
+	c.accessToken = accessToken
 	return c
 }
 
@@ -92,10 +101,25 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 	if err != nil {
 		return nil, err
 	}
-	resp, err := c.httpClient.Post(url, "application/json", bytes.NewBuffer(jsonBytes))
+
+	// Create request w/ body
+	req, err := http.NewRequest("POST", url, bytes.NewReader(jsonBytes))
 	if err != nil {
 		return nil, err
 	}
+
+	// Add appropriate headers
+	req.Header.Add("Content-Type", "application/json")
+	if c.accessToken != "" {
+		req.Header.Add("Authorization", "Bearer "+c.accessToken)
+	}
+
+	// Send request
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
 	// Check that we didn't receive an invalid response
 	err = checkStatus(resp)
 	if err != nil {
