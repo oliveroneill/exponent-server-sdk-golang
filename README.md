@@ -45,11 +45,12 @@ func main() {
             Priority: expo.DefaultPriority,
         },
     )
+    
     // Check errors
     if err != nil {
         panic(err)
-        return
     }
+    
     // Validate responses
     if response.ValidateResponse() != nil {
         fmt.Println(response.PushMessage.To, "failed")
