@@ -1,21 +1,12 @@
-# exponent-server-sdk-golang
-[![Build Status](https://travis-ci.org/oliveroneill/exponent-server-sdk-golang.svg?branch=master)](https://travis-ci.org/oliveroneill/exponent-server-sdk-golang)
-
-Exponent push notification go library based on [Expo's python sdk](https://github.com/exponent/exponent-server-sdk-python)
+# expo-server-sdk-go
+Send push notifications to Expo apps using Go
 
 ## Installation
-
 ```
 go get github.com/oliveroneill/exponent-server-sdk-golang/sdk
 ```
 
 ## Usage
-
-Use to send push notifications to Exponent Experiences from a Golang server.
-
-[Full documentation](https://docs.expo.io/versions/latest/guides/push-notifications.html#http2-api) on the API is available if you want to dive into the details.
-
-Example usage
 ```go
 package main
 
@@ -58,12 +49,5 @@ func main() {
 }
 ```
 
-## TODO
-
-  * Need to add more unit tests
-
-## See Also
-
-  * https://github.com/exponent/exponent-server-sdk-ruby
-  * https://github.com/exponent/exponent-server-sdk-python
-  * https://github.com/exponent/exponent-server-sdk-node
+## License
+MIT
