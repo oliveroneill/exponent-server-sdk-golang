@@ -66,7 +66,7 @@ func NewPushClient(config *ClientConfig) *PushClient {
 
 // Publish sends a single push notification
 // @param push_message: A PushMessage object
-// @return an array of PushResponse objects which contains the results.
+// @return an array of PushResponse objects which contains the results (one per each recipient).
 // @return error if any requests failed
 func (c *PushClient) Publish(message *PushMessage) ([]PushResponse, error) {
 	responses, err := c.PublishMultiple([]PushMessage{*message})
