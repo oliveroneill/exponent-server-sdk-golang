@@ -2,6 +2,7 @@ package expo
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -76,15 +77,21 @@ func (c *PushClient) Publish(message *PushMessage) (PushResponse, error) {
 	return responses[0], nil
 }
 
-// PublishMultiple sends multiple push notifications at once
+// PublishMultiple wraps PublishMultipleWithContext using context.Background
+func (c *PushClient) PublishMultiple(messages []PushMessage) ([]PushResponse, error) {
+	return c.PublishMultipleWithContext(context.Background(), messages)
+}
+
+// PublishMultipleWithContext sends multiple push notifications at once
+// @param ctx: context.Context to use for the http request.
 // @param push_messages: An array of PushMessage objects.
 // @return an array of PushResponse objects which contains the results.
 // @return error if the request failed
-func (c *PushClient) PublishMultiple(messages []PushMessage) ([]PushResponse, error) {
-	return c.publishInternal(messages)
+func (c *PushClient) PublishMultipleWithContext(ctx context.Context, messages []PushMessage) ([]PushResponse, error) {
+	return c.publishInternal(ctx, messages)
 }
 
-func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, error) {
+func (c *PushClient) publishInternal(ctx context.Context, messages []PushMessage) ([]PushResponse, error) {
 	// Validate the messages
 	for _, message := range messages {
 		if len(message.To) == 0 {
@@ -103,7 +110,7 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 	}
 
 	// Create request w/ body
-	req, err := http.NewRequest("POST", url, bytes.NewReader(jsonBytes))
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewReader(jsonBytes))
 	if err != nil {
 		return nil, err
 	}
