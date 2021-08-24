@@ -70,17 +70,19 @@ type Response struct {
 	Errors []map[string]string `json:"errors"`
 }
 
-// SuccessStatus is the status returned from Expo on a success
-const SuccessStatus = "ok"
+const (
+	// SuccessStatus is the status returned from Expo on a success
+	SuccessStatus = "ok"
 
-// ErrorDeviceNotRegistered indicates the token is invalid
-const ErrorDeviceNotRegistered = "DeviceNotRegistered"
+	// ErrorDeviceNotRegistered indicates the token is invalid
+	ErrorDeviceNotRegistered = "DeviceNotRegistered"
 
-// ErrorMessageTooBig indicates the message went over payload size of 4096 bytes
-const ErrorMessageTooBig = "MessageTooBig"
+	// ErrorMessageTooBig indicates the message went over payload size of 4096 bytes
+	ErrorMessageTooBig = "MessageTooBig"
 
-// ErrorMessageRateExceeded indicates messages have been sent too frequently
-const ErrorMessageRateExceeded = "MessageRateExceeded"
+	// ErrorMessageRateExceeded indicates messages have been sent too frequently
+	ErrorMessageRateExceeded = "MessageRateExceeded"
+)
 
 // PushResponse is a wrapper class for a push notification response.
 // A successful single push notification:
@@ -90,7 +92,7 @@ const ErrorMessageRateExceeded = "MessageRateExceeded"
 //      'message': '"adsf" is not a registered push notification recipient'}
 type PushResponse struct {
 	PushMessage PushMessage
-	ID			string			  `json:"id"`
+	ID          string            `json:"id"`
 	Status      string            `json:"status"`
 	Message     string            `json:"message"`
 	Details     map[string]string `json:"details"`
@@ -107,27 +109,28 @@ func (r *PushResponse) ValidateResponse() error {
 	if r.isSuccess() {
 		return nil
 	}
-	err := &PushResponseError{
+	err := PushResponseError{
 		Response: r,
 	}
 	// Handle specific errors if we have information
 	if r.Details != nil {
-		e := r.Details["error"]
-		if e == ErrorDeviceNotRegistered {
+		switch r.Details["error"] {
+		case ErrorDeviceNotRegistered:
 			return &DeviceNotRegisteredError{
-				PushResponseError: *err,
+				PushResponseError: err,
 			}
-		} else if e == ErrorMessageTooBig {
+		case ErrorMessageTooBig:
 			return &MessageTooBigError{
-				PushResponseError: *err,
+				PushResponseError: err,
 			}
-		} else if e == ErrorMessageRateExceeded {
+		case ErrorMessageRateExceeded:
 			return &MessageRateExceededError{
-				PushResponseError: *err,
+				PushResponseError: err,
 			}
 		}
 	}
-	return err
+
+	return &err
 }
 
 // PushResponseError is a base class for all push reponse errors
@@ -139,7 +142,7 @@ func (e *PushResponseError) Error() string {
 	if e.Response != nil {
 		return e.Response.Message
 	}
-	return "Unknown push response error"
+	return "unknown push response error"
 }
 
 // DeviceNotRegisteredError is raised when the push token is invalid
