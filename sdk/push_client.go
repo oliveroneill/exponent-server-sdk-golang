@@ -66,14 +66,14 @@ func NewPushClient(config *ClientConfig) *PushClient {
 
 // Publish sends a single push notification
 // @param push_message: A PushMessage object
-// @return an array of PushResponse objects which contains the results.
+// @return an array of PushResponse objects which contains the results (one per each recipient).
 // @return error if any requests failed
-func (c *PushClient) Publish(message *PushMessage) (PushResponse, error) {
+func (c *PushClient) Publish(message *PushMessage) ([]PushResponse, error) {
 	responses, err := c.PublishMultiple([]PushMessage{*message})
 	if err != nil {
-		return PushResponse{}, err
+		return nil, err
 	}
-	return responses[0], nil
+	return responses, nil
 }
 
 // PublishMultiple sends multiple push notifications at once
@@ -85,6 +85,9 @@ func (c *PushClient) PublishMultiple(messages []PushMessage) ([]PushResponse, er
 }
 
 func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, error) {
+	// Used for sanity check
+	var expectedReceipts int = 0
+
 	// Validate the messages
 	for _, message := range messages {
 		if len(message.To) == 0 {
@@ -95,6 +98,8 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 				return nil, errors.New("Invalid push token")
 			}
 		}
+		// There will be as many receipts as there is total recipients for each message
+		expectedReceipts += len(message.To)
 	}
 	url := fmt.Sprintf("%s%s/push/send", c.host, c.apiURL)
 	jsonBytes, err := json.Marshal(messages)
@@ -142,14 +147,19 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 		return nil, NewPushServerError("Invalid server response", resp, r, nil)
 	}
 	// Sanity check the response
-	if len(messages) != len(r.Data) {
+	if expectedReceipts != len(r.Data) {
 		message := "Mismatched response length. Expected %d receipts but only received %d"
 		errorMessage := fmt.Sprintf(message, len(messages), len(r.Data))
 		return nil, NewPushServerError(errorMessage, resp, r, nil)
 	}
 	// Add the original message to each response for reference
-	for i := range r.Data {
-		r.Data[i].PushMessage = messages[i]
+	i := 0
+	for _, msg := range messages {
+		for _, to := range msg.To {
+			r.Data[i].PushMessage = msg
+			r.Data[i].PushMessage.To = []ExponentPushToken{to}
+			i += 1
+		}
 	}
 	return r.Data, nil
 }

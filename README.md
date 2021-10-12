@@ -26,7 +26,7 @@ func main() {
     client := expo.NewPushClient(nil)
 
     // Publish message
-    response, err := client.Publish(
+    responses, err := client.Publish(
         &expo.PushMessage{
             To: []expo.ExponentPushToken{pushToken},
             Body: "This is a test notification",
@@ -43,8 +43,10 @@ func main() {
     }
     
     // Validate responses
-    if response.ValidateResponse() != nil {
-        fmt.Println(response.PushMessage.To, "failed")
+    for _, res := range responses {
+        if res.ValidateResponse() != nil {
+            fmt.Println(res.PushMessage.To, "failed")
+        }
     }
 }
 ```
