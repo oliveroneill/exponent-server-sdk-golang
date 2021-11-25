@@ -24,6 +24,7 @@ type PushClient struct {
 	apiURL      string
 	accessToken string
 	httpClient  *http.Client
+	url         string
 }
 
 // ClientConfig specifies params that can optionally be specified for alternate
@@ -33,6 +34,7 @@ type ClientConfig struct {
 	APIURL      string
 	AccessToken string
 	HTTPClient  *http.Client
+	URL         string
 }
 
 // NewPushClient creates a new Exponent push client
@@ -43,6 +45,8 @@ func NewPushClient(config *ClientConfig) *PushClient {
 	apiURL := DefaultBaseAPIURL
 	httpClient := DefaultHTTPClient
 	accessToken := ""
+	url := ""
+
 	if config != nil {
 		if config.Host != "" {
 			host = config.Host
@@ -56,11 +60,15 @@ func NewPushClient(config *ClientConfig) *PushClient {
 		if config.HTTPClient != nil {
 			httpClient = config.HTTPClient
 		}
+		if config.URL != "" {
+			url = config.URL
+		}
 	}
 	c.host = host
 	c.apiURL = apiURL
 	c.httpClient = httpClient
 	c.accessToken = accessToken
+	c.url = url
 	return c
 }
 
@@ -96,7 +104,12 @@ func (c *PushClient) publishInternal(messages []PushMessage) ([]PushResponse, er
 			}
 		}
 	}
+
 	url := fmt.Sprintf("%s%s/push/send", c.host, c.apiURL)
+	if c.url != "" {
+		url = c.url
+	}
+
 	jsonBytes, err := json.Marshal(messages)
 	if err != nil {
 		return nil, err
@@ -158,5 +171,10 @@ func checkStatus(resp *http.Response) error {
 	if resp.StatusCode >= 200 && resp.StatusCode <= 299 {
 		return nil
 	}
-	return fmt.Errorf("Invalid response (%d %s)", resp.StatusCode, resp.Status)
+
+	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+		return fmt.Errorf("invalid access token %s", resp.StatusCode)
+	}
+
+	return fmt.Errorf("invalid response %s", resp.Status)
 }
