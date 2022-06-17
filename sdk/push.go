@@ -90,10 +90,10 @@ const ErrorMessageRateExceeded = "MessageRateExceeded"
 //      'message': '"adsf" is not a registered push notification recipient'}
 type PushResponse struct {
 	PushMessage PushMessage
-	ID			string			  `json:"id"`
-	Status      string            `json:"status"`
-	Message     string            `json:"message"`
-	Details     map[string]string `json:"details"`
+	ID          string                 `json:"id"`
+	Status      string                 `json:"status"`
+	Message     string                 `json:"message"`
+	Details     map[string]interface{} `json:"details"`
 }
 
 func (r *PushResponse) isSuccess() bool {
